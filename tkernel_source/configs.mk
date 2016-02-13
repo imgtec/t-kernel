@@ -9,6 +9,9 @@ export GNU_BD="/opt/gcc-arm"
 export GNUarm_2="/opt/gcc-arm/."
 export BUILD_TARGET="tef_em1d"
 
+export ARCH="arm"
+export CROSS_COMPILE="arm-none-eabi-"
+
 alias bd='cd ${BD}'
 alias tk='cd ${BD}"/kernel/sysmain/build/tef_em1d/"'
 alias tm='cd ${BD}"/monitor/tmmain/build/tef_em1d/"'
