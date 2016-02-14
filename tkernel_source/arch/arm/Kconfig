@@ -1,0 +1,17 @@
+config TKERNEL
+	bool "T-Kernel"
+
+config TMONITOR
+	bool "T-Monitor"
+
+config ROMINFO
+	bool "ROM Info"
+
+config KBUILD_VERSION
+	string "KBuild Version"
+	default "linux-4.4.1"
+
+config VMTRONX
+	string "T-Kernel image name"
+	default "vmtronx"
+
