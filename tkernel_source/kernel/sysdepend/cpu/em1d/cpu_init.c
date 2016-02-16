@@ -134,6 +134,9 @@ EXPORT void setup_texhdr( UW *ssp )
 	UINT	m;
 	UW	*usp;
 
+	/* avoid compiler warning. */
+	usp = NULL;
+
 	/* called in interrupt-disabled state */
 
 	ctxtsk->reqdct = 0;	/* release DCT */
