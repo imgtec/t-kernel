@@ -103,6 +103,18 @@ tkernel-build ()
 	fi
 }
 
+#git clean -dfx
+
+build-tmonitor
+cp to-fix to-fix.tmonitor
+build-rominfo
+cp to-fix to-fix.rominfo
+
+build-tkernel
+cp to-fix to-fix.tkernel
+
+cat warnings.log 
+
 
 for f in `cat warnings | sed 's/^.*\///g' | sed 's/:.*$//g' | sort -u`
 do
