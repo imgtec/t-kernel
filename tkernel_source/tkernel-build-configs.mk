@@ -58,3 +58,57 @@ make-source-from-object ()
 	fi
 }
 
+build-tkernel ()
+{
+	make -C kernel/sysmain/build/tef_em1d/ 2>error.log
+	grep "warning" error.log | sort -u >warnings
+	date >>warnings.log
+	cat warnings >>warnings.log
+	echo >>warnings.log
+	echo "### PLEASE FIX THE WARNINGS ###"
+	cat warnings | sed 's/: warning.*$//g' | sed 's/:/ +/g' >to-fix
+	cat to-fix
+}
+
+build-tmonitor ()
+{
+	make -C monitor/tmmain/build/tef_em1d/ 2>error.log
+	grep "warning" error.log | sort -u >warnings
+	date >>warnings.log
+	cat warnings >>warnings.log
+	echo >>warnings.log
+	echo "### PLEASE FIX THE WARNINGS ###"
+	cat warnings | sed 's/: warning.*$//g' | sed 's/:/ +/g' >to-fix
+	cat to-fix
+}
+
+build-rominfo ()
+{
+	make -C config/build/tef_em1d/ 2>error.log
+	grep "warning" error.log | sort -u >warnings
+	date >>warnings.log
+	cat warnings >>warnings.log
+	echo >>warnings.log
+	echo "### PLEASE FIX THE WARNINGS ###"
+	cat warnings | sed 's/: warning.*$//g' | sed 's/:/ +/g' >to-fix
+	cat to-fix
+}
+
+tkernel-build ()
+{
+	target=${1}
+
+	if [ "${target}" = "tmonitor" ]; then
+		echo "HELLO"
+	fi
+}
+
+
+for f in `cat warnings | sed 's/^.*\///g' | sed 's/:.*$//g' | sort -u`
+do
+	echo -n "[$f]:"
+	FILES=`find -name $f -type f`
+	echo ${FILES}
+	touch ${FILES}
+	echo
+done

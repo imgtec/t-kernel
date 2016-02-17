@@ -1,0 +1,34 @@
+#CFLAGS += -D__LINUX_ARM_ARCH__=4
+#CFLAGS += -O2
+#CFLAGS += -Uarm
+#
+#CFLAGS += -Wall
+#CFLAGS += -Wdeclaration-after-statement
+#CFLAGS += -Werror-implicit-function-declaration
+#CFLAGS += -Werror=implicit-int
+#CFLAGS += -Werror=strict-prototypes
+#CFLAGS += -Wframe-larger-than=1024
+#CFLAGS += -Wno-format-security
+#CFLAGS += -Wno-pointer-sign
+#CFLAGS += -Wno-trigraphs
+#CFLAGS += -Wstrict-prototypes
+CFLAGS += -Wundef
+#
+#CFLAGS += -fconserve-stack
+#CFLAGS += -fno-common
+#CFLAGS += -fno-delete-null-pointer-checks
+#CFLAGS += -fno-dwarf2-cfi-asm
+#CFLAGS += -fno-stack-protector
+#CFLAGS += -fno-strict-aliasing
+#CFLAGS += -fno-strict-overflow
+#CFLAGS += -fomit-frame-pointer
+#CFLAGS += -funwind-tables
+#CFLAGS += -g
+#CFLAGS += -mabi=aapcs-linux
+#CFLAGS += -march=armv4t
+#CFLAGS += -marm
+#CFLAGS += -mfpu=vfp
+#CFLAGS += -mno-thumb-interwork
+#CFLAGS += -msoft-float
+#CFLAGS += -mtune=arm9tdmi
+#CFLAGS += -std=gnu89

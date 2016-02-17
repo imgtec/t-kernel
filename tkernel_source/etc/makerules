@@ -138,6 +138,7 @@ endef
 
 ### build option ###
 CFLAGS =
+include $(BD)/linux-cflags.mk
 CPPFLAGS =
 ASFLAGS =
 LDFLAGS =
