@@ -172,4 +172,11 @@
  */
 #define USE_KERNEL_MESSAGE	(1)
 
+/*
+ * Used as disabled but not defined in
+ *	kernel/tkernel/src/task_manage.c
+ */
+#define USE_SINGLE_STACK	(0)
+
+
 #endif /* _CONFIG_ */
