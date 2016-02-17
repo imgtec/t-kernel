@@ -334,7 +334,7 @@ SYSCALL void _tk_ext_tsk( void )
 
 #ifdef DORMANT_STACK_SIZE
 	/* for WARNING */
-	_dummy[0] = 0;
+	(void)_dummy;
 #endif
 }
 
