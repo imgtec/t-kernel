@@ -488,7 +488,7 @@ LOCAL ER close_device( OpnCB *opncb, UINT option )
 	}
 	/* Device driver call */
 	UnlockDM();
-	ercd = call_closefn(devcb, DEVID(devcb, unitno), option);
+	ercd = call_closefn(devcb, devid, option);
 	LockDM();
 
 no_drvcall:
