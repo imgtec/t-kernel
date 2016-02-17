@@ -850,7 +850,7 @@ LOCAL	void	cmdGoTrace(W trace)
 
 	B [break_addr[,break_attr][,commands]]
 */
-LOCAL	void	cmdBreak(VOID)
+LOCAL	void	cmdBreak( void )
 {
 	UW	addr;
 	W	atr, cmdlen;
