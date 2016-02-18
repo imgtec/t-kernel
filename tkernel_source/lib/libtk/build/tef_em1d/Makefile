@@ -30,7 +30,7 @@ SRC =	startup_elf.c \
 	setspc.c waitusec.c waitnsec.c disint.S int.c ptimer.c
 
 # compiler options
-CFLAGS += -fomit-frame-pointer
+GNUC_CFLAGS += -fomit-frame-pointer
 
 # include main makefile (common description)
 include ../../src/Makefile.common

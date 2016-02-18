@@ -61,12 +61,15 @@ endif
 TARGET_ARCH =
 
 # target type
-_CPUTYPE_FLAGS    = -mcpu=arm1176jzf-s -msoft-float -mfpu=vfp
-_CPUTYPE_FLAGS_AS = -mcpu=arm1176jzf-s -mfpu=softvfp
+GNUC_CPUTYPE_FLAGS    = -mcpu=arm1176jzf-s -msoft-float -mfpu=vfp
+GNUC_CPUTYPE_FLAGS_AS = -mcpu=arm1176jzf-s -mfpu=softvfp
+_CPUTYPE_FLAGS    = --cpu=ARM1176JZF-S --fpu=SoftVFP
+_CPUTYPE_FLAGS_AS = --cpu=ARM1176JZF-S --fpu=SoftVFP 
 _TE_SYSTEM_NAME_ = _TEF_EM1D_
 
-# code set
-_CODESET_FLAGS = -mthumb-interwork
+# code set 
+GNUC_CODESET_FLAGS = -mthumb-interwork
+_CODESET_FLAGS = --arm --gnu --diag_suppress 174,68,167
 
 ### build option ###
 CFLAGS +=
@@ -75,7 +78,8 @@ ASFLAGS +=
 LDFLAGS +=
 
 ### C  ###
-CC := $(GNUARM_2)/bin/gcc4arm
+CC := "/opt/local/ARM_Compiler_5.06u1/bin64/armcc"
+GNUC_CC := "/opt/gcc-arm/bin/arm-none-eabi-gcc"
 OUTPUT_OPTION = -o $@
 ifeq ($(mode), debug)
   CFLAGS += -g
@@ -85,25 +89,28 @@ else
   CPPFLAGS += $(HEADER:%=-I%) -D$(_TE_SYSTEM_NAME_)
 endif
 
-CFLAGS += $(_CPUTYPE_FLAGS) $(_CODESET_FLAGS) -mstructure-size-boundary=8 -ffreestanding
+GNUC_CFLAGS += $(_CPUTYPE_FLAGS) $(_CODESET_FLAGS) -mstructure-size-boundary=8 -ffreestanding
+CFLAGS += $(_CPUTYPE_FLAGS) $(_CODESET_FLAGS)
 
-CFLAGS_WARNING      = -Wall -Wno-pointer-sign
-CFLAGS_WARNING_FULL = -pedantic -W -Wall
+GNUC_CFLAGS_WARNING      = -Wall -Wno-pointer-sign
+GNUC_CFLAGS_WARNING_FULL = -pedantic -W -Wall
+CFLAGS_WARNING      = 
+CFLAGS_WARNING_FULL = 
 
 COMPILE.c = $(CC) $(TARGET_ARCH) $(CFLAGS) $(CPPFLAGS) -c
-LINK.c = $(CC) $(TARGET_ARCH) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+LINK.c = $(GNUC_CC) $(TARGET_ARCH) $(GNUC_CFLAGS) $(CPPFLAGS) $(GNUC_LDFLAGS)
 
 %.o: %.c
 	$(COMPILE.c) $< $(OUTPUT_OPTION)
 
 %.s: %.c
-	$(CC) $(TARGET_ARCH) $(CFLAGS) $(CPPFLAGS) -S $<
+	$(GNUC_CC) $(TARGET_ARCH) $(CFLAGS) $(CPPFLAGS) -S $<
 
 %.i: %.c
 	$(CC) $(TARGET_ARCH) $(CFLAGS) $(CPPFLAGS) -E $< $(OUTPUT_OPTION)
 
 ### C++ ###
-CXX := $(GNUARM_2)/bin/gcc4arm
+CXX := "/opt/local/ARM_Compiler_5.06u1/bin64/armcc --cpp"
 CXXFLAGS = $(CFLAGS)
 
 COMPILE.cc = $(CXX) $(TARGET_ARCH) $(CXXFLAGS) $(CPPFLAGS) -c
@@ -126,10 +133,10 @@ else
   ASFLAGS +=
 endif
 
-ASFLAGS += $(_CPUTYPE_FLAGS) $(_CODESET_FLAGS)
+ASFLAGS += $(GNUC_CPUTYPE_FLAGS) $(GNUC_CODESET_FLAGS)
 ASFLAGS.s = $(_CPUTYPE_FLAGS_AS) $(_CODESET_FLAGS)
 
-COMPILE.S = $(CC) $(TARGET_ARCH) $(ASFLAGS) $(CPPFLAGS) -c
+COMPILE.S = $(GNUC_CC) $(TARGET_ARCH) $(ASFLAGS) $(CPPFLAGS) -c
 COMPILE.s = $(AS) $(ASFLAGS.s)
 
 %.o: %.S
@@ -139,17 +146,20 @@ COMPILE.s = $(AS) $(ASFLAGS.s)
 	$(COMPILE.s) $< $(OUTPUT_OPTION)
 
 %.i: %.S
-	$(CC) $(TARGET_ARCH) $(ASFLAGS) $(CPPFLAGS) -E $< $(OUTPUT_OPTION)
+	$(GNUC_CC) $(TARGET_ARCH) $(ASFLAGS) $(CPPFLAGS) -E $< $(OUTPUT_OPTION)
 
 ### linker ###
 LD = $(GNUARM_2)/bin/ld
 ifeq ($(mode), debug)
   LDFLAGS += $(LIBDIR:%=-L%)
+  GNUC_LDFLAGS += $(LIBDIR:%=-L%)
 else
   LDFLAGS += $(LIBDIR:%=-L%)
+  GNUC_LDFLAGS += $(LIBDIR:%=-L%)
 endif
 
 LDFLAGS += $(_CPUTYPE_FLAGS) $(_CODESET_FLAGS)
+GNUC_LDFLAGS += $(GNUC_CPUTYPE_FLAGS) $(GNUC_CODESET_FLAGS)
 
 LIBDIR = $(COMMONLIB)
 LOADLIBES =
@@ -167,16 +177,16 @@ LDFLAGS3 = -static -T $(COMMONLIB)/static.lnk
 START_ADR =
 
 # create executable
-LINK.o = $(CC) $(TARGET_ARCH) $(LDFLAGS) $(LDFLAGS2) $(START_ADR)
+LINK.o = $(GNUC_CC) $(TARGET_ARCH) $(GNUC_LDFLAGS) $(LDFLAGS2) $(START_ADR)
 
 # link objects
-LINK_R.o = $(CC) $(TARGET_ARCH) $(LDFLAGS) -r -nostdlib
+LINK_R.o = $(GNUC_CC) $(TARGET_ARCH) $(GNUC_LDFLAGS) -r -nostdlib
 
 # link objects and libraries
-LINK_A.o = $(CC) $(TARGET_ARCH) $(LDFLAGS) -r
+LINK_A.o = $(GNUC_CC) $(TARGET_ARCH) $(GNUC_LDFLAGS) -r
 
 # create executable (location only)
-LOCATE.o = $(CC) $(TARGET_ARCH) $(LDFLAGS) -nostdlib $(LDFLAGS3) $(START_ADR)
+LOCATE.o = $(GNUC_CC) $(TARGET_ARCH) $(LDFLAGS) -nostdlib $(LDFLAGS3) $(START_ADR)
 
 %: %.o
 	$(LINK.o) $(LDOBJS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)

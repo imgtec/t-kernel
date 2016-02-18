@@ -253,8 +253,8 @@ EXPORT	void	resetSystem(W boot)
 	}
 
 	DSB();
-	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	// I/D TLB invalidate
-	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	// invalidate BTC
+	// I/D TLB invalidate
+	// invalidate BTC
 	DSB();
 	ISB();
 

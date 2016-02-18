@@ -68,10 +68,6 @@ EXPORT ER ROM_startup( void )
  */
 LOCAL void setExcStack( UW mode, UW stack )
 {
-	Asm("	msr	cpsr_c, %1	\n"
-	"	mov	sp, %0		\n"
-	"	msr	cpsr_c, %2	"
-	:: "l"(stack), "r"(mode|PSR_I|PSR_F), "i"(PSR_SVC|PSR_I|PSR_F));
 }
 
 /*

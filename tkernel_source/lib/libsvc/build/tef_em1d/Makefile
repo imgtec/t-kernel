@@ -26,7 +26,7 @@ TETYPE = tef
 include ../../../../etc/makerules
 
 # compiler options
-CFLAGS += -fomit-frame-pointer
+GNUC_CFLAGS += -fomit-frame-pointer
 
 # system dependencies
 IFLIB_SYSDEP =

@@ -114,7 +114,7 @@ Inline void force_dispatch( void )
 {
 IMPORT	void	dispatch_to_schedtsk( void );
 
-	Asm("bx %0":: "r"(&dispatch_to_schedtsk));
+
 }
 
 /*
@@ -122,7 +122,7 @@ IMPORT	void	dispatch_to_schedtsk( void );
  */
 Inline void dispatch( void )
 {
-	Asm("swi %0":: "i"(SWI_DISPATCH): "lr");
+
 }
 
 /* ----------------------------------------------------------------------- */

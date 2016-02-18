@@ -53,9 +53,9 @@ IMPORT void rettex_entry( void );	/* return from task exception */
 	SaveMonHdr.gio_hdr[7]  = SCArea->intvec[VECNO_GIO7];
 
 	/* Initialize task space */
-	Asm("mrc p15, 0, %0, cr2,  c0, 1": "=r"(r));	/* TTBR1 */
-	Asm("mcr p15, 0, %0, cr2,  c0, 0":: "r"(r));	/* TTBR0 */
-	Asm("mcr p15, 0, %0, cr13, c0, 1":: "r"(0));	/* CONTEXTIDR */
+	/* TTBR1 */
+	/* TTBR0 */
+	/* CONTEXTIDR */
 	ISB();
 	PurgeTLB();	/* invlidate TLB */
 
@@ -155,7 +155,7 @@ EXPORT void setup_texhdr( UW *ssp )
 	texhdr = ctxtsk->texhdr;
 
 	/* obtain user stack pointer */
-	Asm("stmia %0, {sp}^ ; nop":: "r"(&usp));
+
 
 	/* reset user stack to the initial value if exception code is 0 */
 	if ( texcd == 0 ) usp = ctxtsk->istack;
@@ -163,7 +163,7 @@ EXPORT void setup_texhdr( UW *ssp )
 	usp -= 3;
 
 	/* set up user stack pointer */
-	Asm("ldmia %0, {sp}^ ; nop":: "r"(&usp));
+
 
 	ENABLE_INTERRUPT;
 

@@ -35,8 +35,8 @@ EXPORT void flashwr_reset( void )
         /* Remap the NOR FlashROM area to its original space, and jump */
 	*PAGETBL_BASE = 0x9402;	// Strongly-order, Kernel/RO
 	DSB();
-	Asm("mcr p15, 0, %0, cr8, cr7, 0":: "r"(0));	// I/D TLB invalidate
-	Asm("mcr p15, 0, %0, cr7, cr5, 6":: "r"(0));	// invalidate BTC
+	// I/D TLB invalidate
+	// invalidate BTC
 	DSB();
 	ISB();
 	(*reset_p)();		/* call reset entry (does not return) */

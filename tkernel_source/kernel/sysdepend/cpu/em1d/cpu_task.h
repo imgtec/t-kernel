@@ -74,16 +74,16 @@ Inline void change_space( void *uatb, INT lsid )
 	UW	ttbr;
 
 	/* if no task space to switch to is not specified, use system default. */
-	Asm("mrc p15, 0, %0, cr2, c0, 1": "=r"(ttbr));	/* TTBR1 */
+	/* TTBR1 */
 	if ( uatb != NULL ) {
 		ttbr = (UW)uatb | (ttbr & 0x07f);
 	}
 
 	/* To synchronize ASID and TTBR change, set ASID to a meaningless value temporarily. */
-	Asm("mcr p15, 0, %0, cr13, c0, 1":: "r"(0));	/* CONTEXTIDR */
+	/* CONTEXTIDR */
 	ISB();
-	Asm("mcr p15, 0, %0, cr2,  c0, 0":: "r"(ttbr)); /* TTBR0 */
-	Asm("mcr p15, 0, %0, cr13, c0, 1":: "r"(lsid)); /* CONTEXTIDR */
+ /* TTBR0 */
+ /* CONTEXTIDR */
 	ISB();
 }
 

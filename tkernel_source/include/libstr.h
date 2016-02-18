@@ -34,13 +34,6 @@ typedef __size_t	size_t;
 #undef	__size_t
 #endif
 
-#ifdef	__wchar_t
-typedef __wchar_t	wchar_t;
-#undef	__wchar_t
-#endif
-
-#define NULL		0
-
 extern void* tkl_memset( void *s, int c, size_t n );
 extern int tkl_memcmp( const void *s1, const void *s2, size_t n );
 extern void* tkl_memcpy( void *dst, const void *src, size_t n );

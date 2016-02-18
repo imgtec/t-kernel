@@ -121,17 +121,11 @@ LOCAL const UINT	GIOB[4] = { _L, _H, _HH, _HHH };
 Inline UW _disint( void )
 {
 	UW	imask;
-	Asm("	mrs	%0, cpsr	\n"
-	"	orr	ip, %0, %1	\n"
-	"	msr	cpsr_xc, ip	"
-		: "=r"(imask)
-		: "i"(PSR_DI)
-		: "ip" );
 	return imask;
 }
 Inline void _enaint( UW imask )
 {
-	Asm("msr cpsr_xc, %0":: "r"(imask));
+
 }
 #define	_DI(imask)	( imask = _disint() )
 #define	_EI(imask)	( _enaint(imask) )

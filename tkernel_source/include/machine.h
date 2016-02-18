@@ -52,6 +52,8 @@
 #ifndef Asm
 #ifdef __GNUC__
 #define Asm		__asm__ volatile
+#else
+#define Asm(...)
 #endif
 #endif
 

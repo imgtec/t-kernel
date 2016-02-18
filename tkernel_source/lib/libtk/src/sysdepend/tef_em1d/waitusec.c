@@ -25,9 +25,5 @@ EXPORT void WaitUsec( UINT usec )
 {
 	UW	count = usec * SCInfo.loop64us / 64U;
 
-	Asm("	loop:	subs	%0, %0, #1	\n"
-	"		bhi	loop		"
-		: "=r"(count)
-		: "0"(count + 1)
-	);
+
 }

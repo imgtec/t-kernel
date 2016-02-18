@@ -48,7 +48,7 @@ EXPORT void FlushCacheM( CONST void *laddr, INT len, UINT mode )
 		p = (VB*)((UINT)laddr & ~(CacheLineSZ - 1));
 		while ( p < ep ) {
 			/* Clean and Invalidate data cache to PoC */
-			Asm("mcr p15, 0, %0, cr7, c14, 1":: "r"(p));
+
 			p += CacheLineSZ;
 		}
 	}
@@ -56,10 +56,10 @@ EXPORT void FlushCacheM( CONST void *laddr, INT len, UINT mode )
 		p = (VB*)((UINT)laddr & ~(CacheLineSZ - 1));
 		while ( p < ep ) {
 			/* Invalidate instruction cache to PoC */
-			Asm("mcr p15, 0, %0, cr7, c5,  1":: "r"(p));
+
 			p += CacheLineSZ;
 		}
-		Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));
+
 	}
 	DSB();
 }
@@ -86,23 +86,23 @@ EXPORT ER ControlCacheM( void *laddr, INT len, UINT mode )
 		switch ( mode ) {
 		  case CC_FLUSH:
 			/* Clean data cache to PoC */
-			Asm("mcr p15, 0, %0, cr7, c10, 1":: "r"(p));
+
 			break;
 		  case CC_INVALIDATE:
 			/* Invalidate data cache to PoC */
-			Asm("mcr p15, 0, %0, cr7, c6, 1":: "r"(p));
+
 			break;
 		  default:
 			/* Clean and Invalidate data cache to PoC */
-			Asm("mcr p15, 0, %0, cr7, c14, 1":: "r"(p));
+
 		}
 
 		/* Invalidate instruction cache to PoC */
-		Asm("mcr p15, 0, %0, cr7, c5,  1":: "r"(p));
+
 
 		p += CacheLineSZ;
 	}
-	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));
+
 	DSB();
 
 	return E_OK;

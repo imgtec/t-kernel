@@ -129,7 +129,7 @@ emu: all config monitor
 
 # objects for RAM
 $(TARGET_RAM): $(TARGET_RAMCRT0) $(OBJ) $(K_OBJ) $(I_OBJ)
-	$(CC) $(TARGET_ARCH) $(LDFLAGS) $^ $(LDLIBS) $(STDLIB) $(OUTPUT_OPTION)
+	$(GNUC_CC) $(TARGET_ARCH) $(GNUC_LDFLAGS) $^ $(LDLIBS) $(STDLIB) $(OUTPUT_OPTION)
 
 $(TARGET_RAM:%.sys=%.map): $(TARGET_RAM)
 	$(NM) $(NMFLAGS) $< > $@

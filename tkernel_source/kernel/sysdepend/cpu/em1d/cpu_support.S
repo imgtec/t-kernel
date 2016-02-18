@@ -390,7 +390,9 @@ Csym(inthdr_startup):
 	str	lr, [ip]
 
 	ldmfd	sp!, {r0-r2}		// restore registers
-	swp	r3, r3, [sp]		// restore r3, R14_svc is saved
+	ldr	r2, [sp]
+	str	r3, [sp]
+	mov	r3, r2
 	swi	SWI_RETINT		// tk_ret_int()
 
 

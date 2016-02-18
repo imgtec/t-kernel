@@ -33,7 +33,7 @@
 Inline UINT getCPSR( void )
 {
 	UINT	cpsr;
-	Asm("mrs %0, cpsr": "=r"(cpsr));
+
 	return cpsr;
 }
 
@@ -42,7 +42,7 @@ Inline UINT getCPSR( void )
  */
 Inline void PurgeTLB( void )
 {
-	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));
+
 	DSB(); ISB();
 }
 

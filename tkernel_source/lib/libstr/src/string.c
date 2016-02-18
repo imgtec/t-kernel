@@ -29,9 +29,9 @@
 
 /* Define weak alias symbol */
 #if	_Csym == 0
-#define	weak_alias(nm, act)	__asm__(".weak "  #nm " ; "  #nm " = "  #act)
+#define	weak_alias(nm, act)	
 #else
-#define	weak_alias(nm, act)	__asm__(".weak _" #nm " ; _" #nm " = _" #act)
+#define	weak_alias(nm, act)
 #endif
 
 #if	use_libstr_memcpy_implicit

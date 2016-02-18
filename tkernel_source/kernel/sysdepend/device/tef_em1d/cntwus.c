@@ -29,11 +29,6 @@
 __attribute__ ((noinline))
 LOCAL void WaitLoop( UW count )
 {
-	Asm("	_loop:	subs	%0, %0, #1	\n"
-	"		bhi	_loop		"
-		: "=r"(count)
-		: "0"(count + 1)
-	);
 }
 
 /*

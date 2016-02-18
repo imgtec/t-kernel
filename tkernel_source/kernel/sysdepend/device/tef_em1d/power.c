@@ -24,7 +24,7 @@
  */
 EXPORT void low_pow( void )
 {
-	Asm("mcr p15, 0, %0, cr7, c0, 4":: "r"(0));
+
 }
 
 /*
@@ -32,5 +32,5 @@ EXPORT void low_pow( void )
  */
 EXPORT void off_pow( void )
 {
-	Asm("mcr p15, 0, %0, cr7, c0, 4":: "r"(0));
+
 }

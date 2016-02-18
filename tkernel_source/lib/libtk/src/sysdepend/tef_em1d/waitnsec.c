@@ -23,11 +23,5 @@
 
 EXPORT void WaitNsec( UINT nsec )
 {
-	UW	count = nsec * SCInfo.loop64us / 64000U;
 
-	Asm("	loop:	subs	%0, %0, #1	\n"
-	"		bhi	loop		"
-		: "=r"(count)
-		: "0"(count + 1)
-	);
 }
