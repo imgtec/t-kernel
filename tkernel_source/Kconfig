@@ -2,10 +2,28 @@
 # For a description of the syntax of this configuration file,
 # see Documentation/kbuild/kconfig-language.txt.
 #
-mainmenu "Linux/$ARCH $KERNELVERSION Kernel Configuration"
+mainmenu "T-Kernel(Linux-4.4.1)/$ARCH $KERNELVERSION Kernel Configuration"
 
 config SRCARCH
 	string
 	option env="SRCARCH"
 
-source "arch/$SRCARCH/Kconfig"
+config TKERNEL
+	bool "T-Kernel"
+
+config TMONITOR
+	bool "T-Monitor"
+
+config ROMINFO
+	bool "ROM Info"
+
+config KBUILD_VERSION
+	string "KBuild Version"
+	default "linux-4.4.1"
+
+config VMTRONX
+	string "T-Kernel image name"
+	default "vmtronx"
+
+source "config/Kconfig"
+source "monitor/Kconfig"

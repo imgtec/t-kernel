@@ -8,7 +8,7 @@
  * This software may be used and distributed according to the terms
  * of the GNU General Public License, incorporated herein by reference.
  *
- * Usage: modpost vmlinux module1.o module2.o ...
+ * Usage: modpost vmtronx module1.o module2.o ...
  */
 
 #define _GNU_SOURCE
@@ -25,14 +25,14 @@
 
 /* Are we using CONFIG_MODVERSIONS? */
 static int modversions = 0;
-/* Warn about undefined symbols? (do so if we have vmlinux) */
-static int have_vmlinux = 0;
+/* Warn about undefined symbols? (do so if we have vmtronx) */
+static int have_vmtronx = 0;
 /* Is CONFIG_MODULE_SRCVERSION_ALL set? */
 static int all_versions = 0;
 /* If we are modposting external module set to 1 */
 static int external_module = 0;
-/* Warn about section mismatch in vmlinux if set to 1 */
-static int vmlinux_section_warnings = 1;
+/* Warn about section mismatch in vmtronx if set to 1 */
+static int vmtronx_section_warnings = 1;
 /* Only warn about unresolved symbols */
 static int warn_unresolved = 0;
 /* How a symbol is exported */
@@ -92,7 +92,7 @@ static inline bool strends(const char *str, const char *postfix)
 	return strcmp(str + strlen(str) - strlen(postfix), postfix) == 0;
 }
 
-static int is_vmlinux(const char *modname)
+static int is_vmtronx(const char *modname)
 {
 	const char *myname;
 
@@ -102,8 +102,8 @@ static int is_vmlinux(const char *modname)
 	else
 		myname = modname;
 
-	return (strcmp(myname, "vmlinux") == 0) ||
-	       (strcmp(myname, "vmlinux.o") == 0);
+	return (strcmp(myname, "vmtronx") == 0) ||
+	       (strcmp(myname, "vmtronx.o") == 0);
 }
 
 void *do_nofail(void *ptr, const char *expr)
@@ -162,7 +162,7 @@ struct symbol {
 	unsigned int crc;
 	int crc_valid;
 	unsigned int weak:1;
-	unsigned int vmlinux:1;    /* 1 if symbol is defined in vmlinux */
+	unsigned int vmtronx:1;    /* 1 if symbol is defined in vmtronx */
 	unsigned int kernel:1;     /* 1 if symbol is from kernel
 				    *  (only for external modules) **/
 	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers, or crc */
@@ -315,14 +315,14 @@ static struct symbol *sym_add_exported(const char *name, struct module *mod,
 			warn("%s: '%s' exported twice. Previous export "
 			     "was in %s%s\n", mod->name, name,
 			     s->module->name,
-			     is_vmlinux(s->module->name) ?"":".ko");
+			     is_vmtronx(s->module->name) ?"":".ko");
 		} else {
 			/* In case Module.symvers was out of date */
 			s->module = mod;
 		}
 	}
 	s->preloaded = 0;
-	s->vmlinux   = is_vmlinux(mod->name);
+	s->vmtronx   = is_vmtronx(mod->name);
 	s->kernel    = 0;
 	s->export    = export;
 	return s;
@@ -609,7 +609,7 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
 	unsigned int crc;
 	enum export export;
 
-	if ((!is_vmlinux(mod->name) || mod->is_dot_o) &&
+	if ((!is_vmtronx(mod->name) || mod->is_dot_o) &&
 	    strncmp(symname, "__ksymtab", 9) == 0)
 		export = export_from_secname(info, get_secindex(info, sym));
 	else
@@ -1936,15 +1936,15 @@ static void read_symbols(char *modname)
 
 	mod = new_module(modname);
 
-	/* When there's no vmlinux, don't print warnings about
+	/* When there's no vmtronx, don't print warnings about
 	 * unresolved symbols (since there'll be too many ;) */
-	if (is_vmlinux(modname)) {
-		have_vmlinux = 1;
+	if (is_vmtronx(modname)) {
+		have_vmtronx = 1;
 		mod->skip = 1;
 	}
 
 	license = get_modinfo(info.modinfo, info.modinfo_len, "license");
-	if (info.modinfo && !license && !is_vmlinux(modname))
+	if (info.modinfo && !license && !is_vmtronx(modname))
 		warn("modpost: missing MODULE_LICENSE() in %s\n"
 		     "see include/linux/module.h for "
 		     "more information\n", modname);
@@ -1965,15 +1965,15 @@ static void read_symbols(char *modname)
 		handle_modversions(mod, &info, sym, symname);
 		handle_moddevtable(mod, &info, sym, symname);
 	}
-	if (!is_vmlinux(modname) ||
-	     (is_vmlinux(modname) && vmlinux_section_warnings))
+	if (!is_vmtronx(modname) ||
+	     (is_vmtronx(modname) && vmtronx_section_warnings))
 		check_sec_ref(mod, modname, &info);
 
 	version = get_modinfo(info.modinfo, info.modinfo_len, "version");
 	if (version)
 		maybe_frob_rcs_version(modname, version, info.modinfo,
 				       version - (char *)info.hdr);
-	if (version || (all_versions && !is_vmlinux(modname)))
+	if (version || (all_versions && !is_vmtronx(modname)))
 		get_src_version(modname, mod->srcversion,
 				sizeof(mod->srcversion)-1);
 
@@ -2039,7 +2039,7 @@ void buf_write(struct buffer *buf, const char *s, int len)
 
 static void check_for_gpl_usage(enum export exp, const char *m, const char *s)
 {
-	const char *e = is_vmlinux(m) ?"":".ko";
+	const char *e = is_vmtronx(m) ?"":".ko";
 
 	switch (exp) {
 	case export_gpl:
@@ -2064,7 +2064,7 @@ static void check_for_gpl_usage(enum export exp, const char *m, const char *s)
 
 static void check_for_unused(enum export exp, const char *m, const char *s)
 {
-	const char *e = is_vmlinux(m) ?"":".ko";
+	const char *e = is_vmtronx(m) ?"":".ko";
 
 	switch (exp) {
 	case export_unused:
@@ -2152,7 +2152,7 @@ static int add_versions(struct buffer *b, struct module *mod)
 	for (s = mod->unres; s; s = s->next) {
 		exp = find_symbol(s->name);
 		if (!exp || exp->module == mod) {
-			if (have_vmlinux && !s->weak) {
+			if (have_vmtronx && !s->weak) {
 				if (warn_unresolved) {
 					warn("\"%s\" [%s.ko] undefined!\n",
 					     s->name, mod->name);
@@ -2208,7 +2208,7 @@ static void add_depends(struct buffer *b, struct module *mod,
 	int first = 1;
 
 	for (m = modules; m; m = m->next)
-		m->seen = is_vmlinux(m->name);
+		m->seen = is_vmtronx(m->name);
 
 	buf_printf(b, "\n");
 	buf_printf(b, "static const char __module_depends[]\n");
@@ -2322,8 +2322,8 @@ static void read_dump(const char *fname, unsigned int kernel)
 			goto fail;
 		mod = find_module(modname);
 		if (!mod) {
-			if (is_vmlinux(modname))
-				have_vmlinux = 1;
+			if (is_vmtronx(modname))
+				have_vmtronx = 1;
 			mod = new_module(modname);
 			mod->skip = 1;
 		}
@@ -2347,7 +2347,7 @@ static int dump_sym(struct symbol *sym)
 {
 	if (!external_module)
 		return 1;
-	if (sym->vmlinux || sym->kernel)
+	if (sym->vmtronx || sym->kernel)
 		return 0;
 	return 1;
 }
@@ -2418,7 +2418,7 @@ int main(int argc, char **argv)
 			all_versions = 1;
 			break;
 		case 's':
-			vmlinux_section_warnings = 0;
+			vmtronx_section_warnings = 0;
 			break;
 		case 'S':
 			sec_mismatch_verbose = 0;

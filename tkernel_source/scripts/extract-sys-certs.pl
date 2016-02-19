@@ -4,7 +4,7 @@ use strict;
 use Math::BigInt;
 use Fcntl "SEEK_SET";
 
-die "Format: $0 [-s <systemmap-file>] <vmlinux-file> <keyring-file>\n"
+die "Format: $0 [-s <systemmap-file>] <vmtronx-file> <keyring-file>\n"
     if ($#ARGV != 1 && $#ARGV != 3 ||
 	$#ARGV == 3 && $ARGV[0] ne "-s");
 
@@ -15,15 +15,15 @@ if ($#ARGV == 3) {
     shift;
 }
 
-my $vmlinux = $ARGV[0];
+my $vmtronx = $ARGV[0];
 my $keyring = $ARGV[1];
 
 #
-# Parse the vmlinux section table
+# Parse the vmtronx section table
 #
-open FD, "objdump -h $vmlinux |" || die $vmlinux;
+open FD, "objdump -h $vmtronx |" || die $vmtronx;
 my @lines = <FD>;
-close(FD) || die $vmlinux;
+close(FD) || die $vmtronx;
 
 my @sections = ();
 
@@ -49,12 +49,12 @@ foreach my $line (@lines) {
 print "Have $#sections sections\n";
 
 #
-# Try and parse the vmlinux symbol table.  If the vmlinux file has been created
-# from a vmlinuz file with extract-vmlinux then the symbol table will be empty.
+# Try and parse the vmtronx symbol table.  If the vmtronx file has been created
+# from a vmtronz file with extract-vmtronx then the symbol table will be empty.
 #
-open FD, "nm $vmlinux 2>/dev/null |" || die $vmlinux;
+open FD, "nm $vmtronx 2>/dev/null |" || die $vmtronx;
 @lines = <FD>;
-close(FD) || die $vmlinux;
+close(FD) || die $vmtronx;
 
 my %symbols = ();
 my $nr_symbols = 0;
@@ -76,7 +76,7 @@ sub parse_symbols(@) {
 parse_symbols(@lines);
 
 if ($nr_symbols == 0 && $sysmap ne "") {
-    print "No symbols in vmlinux, trying $sysmap\n";
+    print "No symbols in vmtronx, trying $sysmap\n";
 
     open FD, "<$sysmap" || die $sysmap;
     @lines = <FD>;
@@ -127,14 +127,14 @@ my $foff = $start - $s->{vma} + $s->{foff};
 
 printf "Certificate list at file offset 0x%x\n", $foff;
 
-open FD, "<$vmlinux" || die $vmlinux;
+open FD, "<$vmtronx" || die $vmtronx;
 binmode(FD);
-die $vmlinux if (!defined(sysseek(FD, $foff, SEEK_SET)));
+die $vmtronx if (!defined(sysseek(FD, $foff, SEEK_SET)));
 my $buf = "";
 my $len = sysread(FD, $buf, $size);
-die "$vmlinux" if (!defined($len));
-die "Short read on $vmlinux\n" if ($len != $size);
-close(FD) || die $vmlinux;
+die "$vmtronx" if (!defined($len));
+die "Short read on $vmtronx\n" if ($len != $size);
+close(FD) || die $vmtronx;
 
 open FD, ">$keyring" || die $keyring;
 binmode(FD);
