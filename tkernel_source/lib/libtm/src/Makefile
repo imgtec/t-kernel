@@ -1,0 +1,16 @@
+lib-y += tm_getchar.o
+lib-y += tm_extsvc.o
+lib-y += tm_command.o
+lib-y += tm_exit.o
+lib-y += tm_putstring.o
+lib-y += tm_printf.o
+lib-y += tm_putchar.o
+lib-y += tm_readdisk.o
+lib-y += _putstring.o
+lib-y += _getstring.o
+lib-y += tm_writedisk.o
+lib-y += _getchar.o
+lib-y += _putchar.o
+lib-y += tm_monitor.o
+lib-y += tm_getline.o
+lib-y += tm_infodisk.o

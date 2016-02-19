@@ -384,10 +384,23 @@ __LINUXINCLUDE    := \
 		$(if $(KBUILD_SRC), -I$(srctree)/include) \
 		-Iinclude \
 		$(USERINCLUDE)
+LINUXINCLUDE    := \
+		  -Iinclude \
+		  -Ilib/libtk/src/sysdepend/tef_em1d \
+		  -Ilib/libtm/src/sysdepend/tef_em1d \
+		  -Ikernel/sysmgr/src \
+		  -Ikernel/sysdepend/device/tef_em1d \
+		  -Ikernel/sysinit/src \
+		  -Ikernel/tkernel/src \
+		  -Ikernel/sysdepend/cpu/em1d
 
-KBUILD_CPPFLAGS := -D__KERNEL__
+KBUILD_CPPFLAGS := -D__KERNEL__ \
+		   -DBKERNEL \
+		   -DTKERNEL_CHECK_CONST \
+		   -DTKERNEL_ONLY \
+		   -D_TEF_EM1D_
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wall -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
@@ -521,7 +534,8 @@ ifeq ($(config-targets),1)
 # Read arch specific Makefile to set KBUILD_DEFCONFIG as needed.
 # KBUILD_DEFCONFIG may point out an alternative default configuration
 # used for 'make defconfig'
-include arch/$(SRCARCH)/Makefile
+include monitor/Makefile
+include config/Makefile
 export KBUILD_DEFCONFIG KBUILD_KCONFIG
 
 config: scripts_basic outputmakefile FORCE
@@ -547,9 +561,19 @@ __scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
 
 # Objects we will link into vmlinux / subdirs we need to visit
 init-y		:= init/
-drivers-y	:= drivers/ sound/ firmware/
+drivers-y	:= drivers/ sound/ firmware/ driver/
 net-y		:= net/
 libs-y		:= lib/
+libs-y		+= lib/crt/crt0/src/sysdepend/tef_em1d/
+libs-y		+= lib/crt/crttk/src/
+libs-y		+= lib/crt/crttk/src/sysdepend/tef_em1d/
+libs-y		+= lib/libdrvif/src/
+libs-y		+= lib/libstr/src/
+libs-y		+= lib/libsvc/src/sysdepend/em1d/
+libs-y		+= lib/libsys/src/
+libs-y		+= lib/libtk/src/
+libs-y		+= lib/libtk/src/sysdepend/tef_em1d/
+libs-y		+= lib/libtm/src/ 
 core-y		:= usr/
 virt-y		:= virt/
 endif # KBUILD_EXTMOD
@@ -763,7 +787,7 @@ KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)
 
 # require functions to have arguments in prototypes, not empty 'int foo()'
-KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
+# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
 
 # Prohibit date/time macros, which would make the build non-deterministic
 KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
@@ -901,7 +925,7 @@ virt-y		:= $(patsubst %/, %/built-in.o, $(virt-y))
 # Externally visible symbols (used by link-vmlinux.sh)
 export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
 export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y) $(virt-y)
-export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
+export KBUILD_LDS          := kernel/sysmain/build/tef_em1d/kernel-ram.lnk
 export LDFLAGS_vmlinux
 # used by scripts/pacmage/Makefile
 export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Documentation include samples scripts tools)
