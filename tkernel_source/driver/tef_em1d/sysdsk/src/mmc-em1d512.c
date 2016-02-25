@@ -1,15 +1,4 @@
-mmcAbort(){}
-mmcCmdRsp(){}
-mmcDatIn(){}
-mmcDatInOutStop(){}
-mmcDatOut(){}
-mmcMediaDetect(){}
-mmcPower(){}
-mmcReset(){}
-mmcResume(){}
-mmcRwCleanup(){}
-mmcRwSetup(){}
-mmcSuspend(){}
-mmcTskInit(){}
-mmcWriteProtect(){}
-mmcXferSpeed(){}
+#include <tk/tkernel.h>
+#include "sdisk.h"
+
+void	mmcAbort(DrvTab *drv) { return; }

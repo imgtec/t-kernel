@@ -43,7 +43,6 @@ HEADER += $(S)
 SRC = main.c accept.c common.c inthdr.c pccard.c \
 	ata.c atacmd.c ataio.c mem.c mmc-common.c mmc-em1d512.c
 
-SOBJ =  ../obj/mmc-common.o ../obj/mmc-em1d512.o
 OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 CFLAGS += -DUSE_MEMDRV -DUSE_MMCDRV
