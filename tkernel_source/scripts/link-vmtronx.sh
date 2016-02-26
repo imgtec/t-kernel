@@ -166,7 +166,7 @@ info LD vmtronx.o
 modpost_link vmtronx.o
 
 # modpost vmtronx.o to check for section mismatches
-${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmtronx.o
+# ${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmtronx.o
 
 # Update version
 info GEN .version

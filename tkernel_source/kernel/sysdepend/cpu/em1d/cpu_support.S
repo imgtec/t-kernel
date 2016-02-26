@@ -390,7 +390,7 @@ Csym(inthdr_startup):
 	str	lr, [ip]
 
 	ldmfd	sp!, {r0-r2}		// restore registers
-	swp	r3, r3, [sp]		// restore r3, R14_svc is saved
+@	swp	r3, r3, [sp]		// restore r3, R14_svc is saved
 	swi	SWI_RETINT		// tk_ret_int()
 
 
@@ -790,7 +790,7 @@ hook_enter:
 
 hook_leave:
 	sub	sp, fp, #6*4		// sp = saved position of exinf
-	swp	r2, r0, [sp]		// save ret and , restore exinf
+@	swp	r2, r0, [sp]		// save ret and , restore exinf
 	mov	r1, r0			// ret
 	ldr	r0, [fp, #0*4]		// fncd
 
@@ -943,7 +943,7 @@ Csym(timer_handler_startup):
 	mov	sp, fp
 	ldmfd	sp!, {r0-r2, r4-r5, fp, lr}	// restore registers
 
-	TK_RET_INT_FIQ PSR_IRQ		// tk_ret_int()
+@ 	TK_RET_INT_FIQ PSR_IRQ		// tk_ret_int()
 
 /* ------------------------------------------------------------------------ */
 /*

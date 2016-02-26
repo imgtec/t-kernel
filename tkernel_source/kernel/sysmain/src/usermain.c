@@ -129,6 +129,7 @@ EXPORT	INT	usermain( void )
 {
 	ER	ercd;
 
+	ercd = 0;
 	/* Start the device drivers */
 #ifdef DRV_CONSOLE
 	ercd = ConsoleIO(0, NULL);

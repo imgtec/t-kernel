@@ -1225,7 +1225,7 @@ clean: archclean vmtronxclean
 #
 mrproper: rm-dirs  := $(wildcard $(MRPROPER_DIRS))
 mrproper: rm-files := $(wildcard $(MRPROPER_FILES))
-mrproper-dirs      := $(addprefix _mrproper_,Documentation/DocBook scripts)
+mrproper-dirs      := $(addprefix _mrproper_,scripts)
 
 PHONY += $(mrproper-dirs) mrproper archmrproper
 $(mrproper-dirs):
