@@ -134,3 +134,91 @@ EXPORT void procReset( void )
 	DispProgress(0x0f);
 
 }
+/* Test stuff for i.MX280 only */
+
+struct HW_TIMROT_T {
+	unsigned long HW_TIMROT_ROTCTRL[4];
+	unsigned long HW_TIMROT_TIMCTRL[4];
+	unsigned long HW_TIMROT_RUNNING_COUNT[4];
+	unsigned long HW_TIMROT_FIXED_COUNT[4];
+	unsigned long HW_TIMROT_MATCH_COUNT[4];
+};
+
+#define IRQ         (1<<15)
+#define IRQ_EN      (1<<14)
+#define MATCH_MODE  (1<<11)
+#define POLARITY    (1<<8)
+#define UPDATA      (1<<7)
+#define RELOAD      (1<<6)
+#define PRESCALE(n) ((n)<<4)
+  #define IDV_BY_8     (0x3)
+#define SELECT(n)   ((n)<<0)
+  #define TICK_ALWAYS  (0XF)
+
+
+
+volatile struct HW_TIMROT_T *hw_timer_rotary[3];
+
+
+void timer_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
+{
+#define BIT(n) (1<<n)
+#define BITTST(val, n) ((val) & BIT(n))
+	volatile unsigned long val;
+
+	hw_timer_rotary[0] = (void *)(0x80068000); /* have ROTCTRL */
+	hw_timer_rotary[1] = (void *)(0x80068050);
+	hw_timer_rotary[2] = (void *)(0x80068080);
+	hw_timer_rotary[3] = (void *)(0x800680C0);
+
+
+	val = hw_timer_rotary[0]->HW_TIMROT_ROTCTRL[0];
+	if(BITTST(val,25)) printk("Have timer 0\n");
+	if(BITTST(val,26)) printk("Have timer 1\n");
+	if(BITTST(val,27)) printk("Have timer 2\n");
+	if(BITTST(val,28)) printk("Have timer 3\n");
+
+#define IRQ         (1<<15)
+#define IRQ_EN      (1<<14)
+#define MATCH_MODE  (1<<11)
+#define POLARITY    (1<<8)
+#define UPDATA      (1<<7)
+#define RELOAD      (1<<6)
+#define PRESCALE(n) ((n)<<4)
+  #define DIV_BY_8     (0x3)
+#define SELECT(n)   ((n)<<0)
+  #define TICK_ALWAYS  (0XF)
+
+
+#define SET 1
+#define CLR 2
+#define TOG 3
+
+	hw_timer_rotary[1]->HW_TIMROT_FIXED_COUNT[0] = 0x00080000;
+	val = IRQ_EN | UPDATA | PRESCALE(TICK_ALWAYS) | SELECT(0xB);
+  	hw_timer_rotary[1]->HW_TIMROT_TIMCTRL[0] = val;
+	hw_timer_rotary[1]->HW_TIMROT_TIMCTRL[SET] = RELOAD;
+	
+
+	do {
+
+		val = (unsigned long)&(hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0]);
+		printk("Reading register [%x]:", val);
+
+		
+		val = hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0];
+		printh(val, 1);
+
+		printk("\n");
+
+		if(val<0x10000) break;
+
+		val = 0x400000;
+		while(val--);
+	} while(1);
+
+	printk("Goodbye TIMER!\n");
+		
+	
+}
+

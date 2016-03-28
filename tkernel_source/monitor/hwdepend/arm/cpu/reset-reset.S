@@ -42,7 +42,7 @@
 	.global __vectors_start
 	.arm
 startup_entry:
-@ ARM926EJ-S NZCVQ--J -------- -------- IFTMMMMM
+@ ARM926EJ-S NZCVQ--J -------- -------- IFTM MMMM
 @ CORTEX-R4  NZCVQ[IT 1:0] J [DNM][GE 3:0][IT 7:2]EAIFTMMMMM page 3-9
 @ ARM lowlevel initial
 // SVC mode, FIQ/IRQ interrupt disabled
@@ -316,21 +316,133 @@ reset_entry:
 	.word	0xFFFFFFFF		@ undefined
 	svc	1			@ syscall
 	svc	2			@ syscall
+mrs	r0, cpsr
+bl	printh
 	svc	3			@ syscall
+mrs	r0, cpsr
+bl	printh
 	svc	51			@ syscall
+mrs	r0, cpsr
+bl	printh
 	svc	61			@ syscall
 	svc	71			@ syscall
 	svc	81			@ syscall
 	svc	91			@ syscall
 	svc	101			@ syscall
-	svc	88			@ syscall
+@	svc	4			@ syscall
 
-	ldr	r0, =0x44000003
-	ldr	r1, [r0]		@ data abort
+ldr	r0, =0x1234ABCD
+bl	printh
+@ timer0_irq
+@ enable irq
+	mrs	r0, cpsr
+	bic	r0, #(1<<7)	@ irq
+	bic	r0, #(1<<6)	@ fiq
+	msr	cpsr, r0
+@ enable vic
+	ldr	r1, =0x80000000
+
+
+	ldr	r0, [r1, #0x020]
+	orr	r0, #(1<<16)	@ IRQ_FINAL_ENABLE
+	orr	r0, #(1<<17)	@ FIQ
+	orr	r0, #(1<<30)	@ gate
+	bic	r0, #(1<<31)	@ SFTRST
+	str	r0, [r1, #0x020]
+
+	bl	delay
+
+@ enable timer0 irq
+	orr	r0, #0x07
+	str	r0, [r1, #0x420]
+
+@ triger a software irq
+	nop
+	nop
+	nop
+	nop
+	bl	delay
 	
-@	b	resetLoop		// return will cause another reset
+	orr	r0, #(1<<3)		@ force irq
+	str	r0, [r1, #0x420]
+	
+	bic	r0, #(1<<3)		@ force irq
+	str	r0, [r1, #0x420]
+	orr	r0, #(1<<3)		@ force irq
+	str	r0, [r1, #0x420]
+
+
+	bl	irq_entry
+
+
+	bl	timer_irq
+
+	bl	irq_entry
+
+	ldr	r0, =endmsg
+	bl	printk
+	
 	b	.
 
+endmsg:
+.asciz "END"
+
+delay:
+	ldr	r7, =0x8000000
+1:	sub	r7, #1
+	cmp	r7, #0
+	bne	1b
+	bx	lr
+
+@ timer0_irq
+
+	ldr	r0, =0x44000003
+	ldr	r1, [r0, #0x410]		@ data abort
+
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+	
+mrs	r0, cpsr
+bl	printh
+
+mrs	r0, cpsr
+bl	printh
+mrs	r0, cpsr
+bl	printh
+mrs	r0, cpsr
+bl	printh
+@	b	resetLoop		// return will cause another reset
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	b	.
+	.global __stop
+__stop:
+	b	__stop
 	
 @ vectors for relocate to 0x00000000 or 0xFFFF0000
 __vectors_start:
@@ -377,6 +489,7 @@ __magic:
 	.global	__stack_size
 	.global	__stack_limit
 	.global	__stack_bottom
+	.global	__stack_system
 __stack_top:
 	.word	__STACK_TOP
 __stack_size:

@@ -23,7 +23,6 @@
 #include <sys/sysinfo.h>
 
 EXPORT	UW	regStack[39 + 10 + 2];
-
 /*
         register definition table
 
@@ -301,6 +300,7 @@ EXPORT	void	dispRegister(W regno)
 	}
 	if (n & 0x0f) DSP_LF;
 }
+
 /*
         obtain CPSR register value
 */

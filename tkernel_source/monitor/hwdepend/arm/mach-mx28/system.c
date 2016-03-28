@@ -34,7 +34,7 @@ IMPORT	void	powerOff(void);
 IMPORT	void	resetStart(void);
 
 /* interrupt entry point (eitent.S) */
-LOCAL void helloworld(unsigned int vec)
+EXPORT void helloworld(unsigned int vec)
 {
 	static long random = 0;
 	volatile int i = 1*1024*1024;
@@ -43,6 +43,21 @@ LOCAL void helloworld(unsigned int vec)
 	printk("[%u]: Hello World(%u)\n", vec, random);
 	while(i--);
 }
+
+
+LOCAL void data_abort(unsigned int vec)
+{
+	static int random = 0;
+	volatile int i = 5*1024*1024;
+
+	random++;
+	printk("VEC:[%08x]: Data Abort!(%u)\n", vec, random);
+	while(i--);
+	
+	printk("leaving ...\n");
+}
+
+
 
 /* default handler (cmdsvc) */
 IMPORT	void	_defaultHdr(void);
@@ -194,6 +209,8 @@ setup_vec:
 	for (i=0; i<256; i++) {
 		SCArea->intvec[i] = helloworld;
 	}
+	
+	SCArea->intvec[3]		= data_abort;	/* default handler */
 	SCArea->intvec[EIT_DEFAULT]	= helloworld;	/* default handler */
 	SCArea->intvec[EIT_UNDEF]	= helloworld;	/* undefined instruction */
 	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */

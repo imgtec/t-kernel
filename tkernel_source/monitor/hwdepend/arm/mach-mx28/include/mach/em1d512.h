@@ -20,8 +20,8 @@
  *       * this is included from assembler program source files
  */
 
-#ifndef	__MONITOR_ARM_EM1D_H__
-#define	__MONITOR_ARM_EM1D_H__
+#ifndef	__MONITOR_ARM_MX28_H__
+#define	__MONITOR_ARM_MX28_H__
 
 #include <tk/sysdef.h>
 
