@@ -136,6 +136,21 @@ EXPORT void procReset( void )
 }
 /* Test stuff for i.MX280 only */
 
+/* ICOLL */
+#define HW_ICOLL_VECTOR   0x80000000
+#define HW_ICOLL_LEVELACK 0x80000010
+#define HW_ICOLL_CTRL     0x80000020
+#define HW_ICOLL_VBASE    0x80000040
+#define HW_ICOLL_STAT     0x80000070
+#define HW_ICOLL_RAW0     0x800000A0
+#define HW_ICOLL_RAW1     0x800000B0
+#define HW_ICOLL_RAW2     0x800000C0
+#define HW_ICOLL_RAW3     0x800000D0
+
+
+
+
+
 struct HW_TIMROT_T {
 	unsigned long HW_TIMROT_ROTCTRL[4];
 	unsigned long HW_TIMROT_TIMCTRL[4];
@@ -159,12 +174,32 @@ struct HW_TIMROT_T {
 
 volatile struct HW_TIMROT_T *hw_timer_rotary[3];
 
+void irq(void)
+{
+}
 
 void timer_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 {
 #define BIT(n) (1<<n)
 #define BITTST(val, n) ((val) & BIT(n))
 	volatile unsigned long val;
+	int i;
+
+	static unsigned long icoll_vector[128];
+
+	for(i=0; i<128; i++) {
+		icoll_vector[i] = 4U * i;
+	}
+
+
+	out_w(HW_ICOLL_VECTOR, icoll_vector);
+
+
+
+
+
+
+
 
 	hw_timer_rotary[0] = (void *)(0x80068000); /* have ROTCTRL */
 	hw_timer_rotary[1] = (void *)(0x80068050);
@@ -203,13 +238,14 @@ void timer_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 	do {
 
 		val = (unsigned long)&(hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0]);
-		printk("Reading register [%x]:", val);
+		printk("Reading register [%016x]:\n", val);
+		printk("Reading register [% 16x]:\n", val);
+		printk("Reading register [%-16x]:\n", val);
+		printk("Reading register [%116x]:\n", val);
 
-		
-		val = hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0];
-		printh(val, 1);
+		val = (hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0]);
 
-		printk("\n");
+		printk("%08X\n", val);
 
 		if(val<0x10000) break;
 
