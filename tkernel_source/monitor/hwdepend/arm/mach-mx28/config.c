@@ -235,14 +235,33 @@ EXPORT	void	initHardware(void)
 }
 
 /* LED on/off */
+#define HW_PINCTRL_MUXSEL0	(0x00000100)
+#define HW_PINCTRL_DRIVE6	(0x00000360)
+#define HW_PINCTRL_DOUT1	(0x80018710)
+#define HW_PINCTRL_DOE1 	(0x80018B10)
+#define HW_PINCTRL		(0x80018000)
+#define HW_PINCTRL_MUXSEL3	(0xFFFFFFFF)
 EXPORT	void	cpuLED(UW v)
 {
+#if 0
+	out_w(HW_PINCTRL_MUXSEL3+HW_PINCTRL,3<<14);
+
+	out_w(HW_PINCTRL+HW_PINCTRL_DRIVE6,1<<23);
+	/*set*/
+	out_w(HW_PINCTRL_DOUT1,1<<23);
+
+	out_w(HW_PINCTRL_DOE1,1<<23);
+	/*reset*/
+//	out_w(HW_PINCTRL_DOUT1,0<<23);
+#else
 	if(v == LED_POWERUP) {
 		printk("[info]:\tLED power up\n");
 	}
 	else if (v == LED_MEMCLR) {
 		printk("[info]:\tLED mem clear\n");
 	}
+
+#endif
 }
 
 /*
